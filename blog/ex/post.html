@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>CaoYongjun&#39;s Blog</title>
+  
+  <script src="js/jquery-3.0.0.min.js"></script>
+  <script src="js/common.js?20181127141300"></script>
+  
+  <script>
+    $(function(){
+    	initData();
+    });
+    
+	function initData(){
+		
+		$.ajax({
+	        url : apiUrl+"ex/type",
+	        type : "get",
+	        async : false,//此处需要注意的是要想获取ajax返回的值这个async属性必须设置成同步的，否则获取不到返回值
+	        dataType: "jsonp",
+	        dataType : "json",
+	        success : function(data) {
+	        	if(data.code==101){
+	        		var list=data.body.data;
+	        		
+	        		$("#sel").empty();//首先清空select现在有的内容
+	                $("#sel").append("<option selected='selected' value=0>请选择类型</option>");
+	                $.each(list,function(index,value){
+	                    var item = value;
+	                    $("#sel").append("<option  value=" + item.typeId + ">" + item.typeName + "</option>");
+	        		});
+	        	}
+	        }
+	    });
+	}
+  
+	function save(){
+		var userId=$("#userId").val();
+		if(userId==null||userId==undefined||userId==""){
+			alert("用户id不能为空");
+			return;
+		}
+		var experience=$("#experience").val();
+		if(experience==null||experience==undefined||experience==""){
+			alert("经验值不能为空");
+			return;
+		}
+		var typeId=$("#sel").val();
+		if(typeId==0){
+			alert("请选择类型");
+			return;
+		}
+		var content=$("#content").val();
+		
+		$.ajax({
+	        url : apiUrl+"ex?userId="+userId+"&experience="+experience+"&typeId="+typeId+"&content="+content,
+	        type : "post",
+	        async : false,//此处需要注意的是要想获取ajax返回的值这个async属性必须设置成同步的，否则获取不到返回值
+	        dataType: "jsonp",
+	        dataType : "json",
+	        success : function(data) {
+	        	alert(data.body.message);
+	        	if(data.code==101){
+	        		//跳转页面
+	        		window.location.href = "index_list.html";
+	        	}
+	        }
+	    });
+	}
+  </script>
+</head>
+
+<body>
+  <form id="exform" name=""exform"" action="ex" method="post">
+          用户名:<input name="userId" id="userId" />
+          经验:<input type="number" name="experience" id="experience" />
+          类型:
+    <select id="sel">
+	</select>
+	内容:<input name="content" id="content" />
+    <input type="button" value="提交" onClick="save()">
+  </form>
+</body>
+</html>

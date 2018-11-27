@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>CaoYongjun&#39;s Blog</title>
+  
+  <script src="js/jquery-3.0.0.min.js"></script>
+  <script src="js/common.js?20181127141300"></script>
+  
+  <script>
+    
+	function save(){
+    	var userId=$("#userId").val();
+    	if(userId==null||userId==undefined||userId==""){
+			alert("用户id不能为空");
+			return;
+		}
+    	showData(userId,1,1000);
+    }
+    
+    function showData(userId,pageNo,pageSize){
+    	$.ajax({
+	        url : apiUrl+"ex/list?userId="+userId+"&pageNo="+pageNo+"&pageSize="+pageSize,
+	        type : "get",
+	        async : false,//此处需要注意的是要想获取ajax返回的值这个async属性必须设置成同步的，否则获取不到返回值
+	        dataType: "jsonp",
+	        dataType : "json",
+	        success : function(data) {
+	        	if(data.code==101){
+	        		var content=data.body.data;
+	        		
+	        		var list=content.list;
+	        		$("#list").empty();//首先清空select现在有的内容
+	                $.each(list,function(index,value){
+	                    var item = value;
+	                    console.log(item);
+	                    $("#list").append("<tr>");
+	                    $("#list").append("<td>"+item.logId+"</td>");
+	                    $("#list").append("<td>"+item.typeStr+"</td>");
+	                    $("#list").append("<td>"+item.experience+"分</td>");
+	                    $("#list").append("<td>"+item.content+"</td>");
+	                    $("#list").append("<td>"+item.createAtStr+"</td>");
+	                    $("#list").append("</tr>");
+	        		});
+	        		
+	        		var user=content.user;
+	        		
+	        		$("#user").html("级别:"+user.userLevel+" 总经验:"+user.experience+" 更新时间:"+user.updateAtStr);
+	        	}
+	        }
+	    });
+    }
+  </script>
+</head>
+
+<body>
+	
+	用户名:<input type="text" id="userId">
+	<input type="button" value="提交" onClick="save()">
+	
+	<div id="user"></div>
+    <table border='1'>
+    	<thead>
+    		<tr>
+				<th>id</th>
+    			<th>类型</th>
+    			<th>经验</th>
+    			<th>内容</th>
+	            <th>时间</th>
+	        </tr>
+    	</thead>
+        <tbody id="list">
+        	
+        </tbody>
+    </table>
+</body>
+</html>
