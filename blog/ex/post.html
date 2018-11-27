@@ -64,7 +64,7 @@
 	        	alert(data.body.message);
 	        	if(data.code==101){
 	        		//跳转页面
-	        		window.location.href = "http://caoyongjun/ex_list.html";
+	        		window.location.href = "http://caoyongjun.com/ex_list.html";
 	        	}
 	        }
 	    });
@@ -74,12 +74,13 @@
 
 <body>
   <form id="exform" name=""exform"" action="ex" method="post">
-          用户名:<input name="userId" id="userId" />
-          经验:<input type="number" name="experience" id="experience" />
+          用户名:<input name="userId" id="userId" /><br><br>
+          经验:<input type="number" name="experience" id="experience" /><br><br>
           类型:
     <select id="sel">
 	</select>
-	内容:<input name="content" id="content" />
+	<br><br>
+	内容:<input name="content" id="content" /><br><br>
     <input type="button" value="提交" onClick="save()">
   </form>
 </body>
