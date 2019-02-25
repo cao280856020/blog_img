@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>CaoYongjun&#39;s Blog</title>
+  
+  <script src="js/jquery-3.0.0.min.js"></script>
+  <script src="js/common.js%3F20181227104900"></script>
+  
+  <script>
+  
+	function nextOrPre(v){
+		var pageNo=$("#pageNo").val();
+  		if(v=='pre'){
+  			pageNode=parseInt(pageNo)-1;
+  			if(pageNode<=0){
+  				alert("第一页不能点击");
+  				return;
+  			}else{
+  				$("#pageNo").val(pageNode);
+  				save();
+  			}
+  		}else{
+  			var hasNext=$("#hasNext").val();
+  			
+  			if(hasNext){
+	  			pageNode=parseInt(pageNo)+1;
+	  			$("#pageNo").val(pageNode);
+  				save();
+  			}else{
+  				alert("不能点击");
+  				return;
+  			}
+  		}
+  	}
+    
+	function save(){
+    	var userId=$("#userId").val();
+    	if(userId==null||userId==undefined||userId==""){
+			alert("用户id不能为空");
+			return;
+		}
+    	showData(userId,$("#pageNo").val(),10);
+    }
+    
+    function showData(userId,pageNo,pageSize){
+    	$.ajax({
+	        url : apiUrl+"ex/list?userId="+userId+"&pageNo="+pageNo+"&pageSize="+pageSize,
+	        type : "get",
+	        async : false,//此处需要注意的是要想获取ajax返回的值这个async属性必须设置成同步的，否则获取不到返回值
+	        dataType: "jsonp",
+	        dataType : "json",
+	        success : function(data) {
+	        	if(data.code==101){
+	        		var content=data.body.data;
+	        		
+	        		var hasNext=content.hasNext;
+	        		if(hasNext){
+	        			$("#hasNext").val(content.hasNext);
+	        			$("#next").show();
+	        		}else{
+	        			$("#next").hide();
+	        		}
+	        		
+	        		$("#pre").show();
+	        		
+	        		var total=content.total;
+	        		var list=content.list;
+	        		$("#list").empty();//首先清空select现在有的内容
+	                $.each(list,function(index,value){
+	                    var item = value;
+	                    $("#list").append("<tr>");
+	                    $("#list").append("<td>"+item.logId+"</td>");
+	                    $("#list").append("<td>"+item.typeStr+"</td>");
+	                    $("#list").append("<td>"+item.experience+"分</td>");
+	                    $("#list").append("<td>"+item.content+"</td>");
+	                    $("#list").append("<td>"+item.createAtStr+"</td>");
+	                    $("#list").append("<td>"+item.ip+"</td>");
+	                    $("#list").append("</tr>");
+	        		});
+	        		
+	        		var user=content.user;
+	        		
+	        		$("#user").html("级别:"+user.userLevel+" 总经验:"+user.experience+" 更新时间:"+user.updateAtStr+" 总数:"+total);
+	        	}
+	        }
+	    });
+    }
+  </script>
+</head>
+
+<body>
+	
+	用户名:<input type="text" id="userId">
+	<input type="button" value="提交" onClick="save()">
+	<input type="button" id="pre" value="pre" style="display:none" onClick="nextOrPre('pre')">
+	<input type="button" id="next" value="next" style="display:none" onClick="nextOrPre('next')">
+	<input type="hidden" value="1" id="pageNo">
+	<input type="hidden" id="hasNext">
+	<div id="user"></div>
+    <table border='1'>
+    	<thead>
+    		<tr>
+				<th>id</th>
+    			<th>类型</th>
+    			<th>经验</th>
+    			<th>内容</th>
+	            <th>时间</th>
+	            <th>ip地址</th>
+	        </tr>
+    	</thead>
+        <tbody id="list">
+        	
+        </tbody>
+    </table>
+</body>
+</html>
